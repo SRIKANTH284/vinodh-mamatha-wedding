@@ -168,9 +168,14 @@
             60%  { transform: scale(1); }
             100% { transform: scale(1); }
         }
-        @keyframes arrow-pulse {
+        @keyframes arrow-toward-left {
             0%   { opacity: 0.3; transform: translateX(0); }
             50%  { opacity: 1;   transform: translateX(6px); }
+            100% { opacity: 0.3; transform: translateX(0); }
+        }
+        @keyframes arrow-toward-right {
+            0%   { opacity: 0.3; transform: translateX(0); }
+            50%  { opacity: 1;   transform: translateX(-6px); }
             100% { opacity: 0.3; transform: translateX(0); }
         }
         @keyframes rainbow-border {
@@ -330,21 +335,21 @@
                             search was over."</p>
                     </div>
 
-                    <!-- Heart Icon with Arrows -->
-                    <div class="flex items-center gap-2 md:gap-3">
-                        <!-- Arrow from groom -->
-                        <div class="flex items-center gap-1 text-gold-500" style="animation: arrow-pulse 1.2s ease-in-out infinite;">
+                    <!-- Heart Icon with Arrows pointing toward heart -->
+                    <div class="flex items-center gap-2 md:gap-4">
+                        <!-- Arrows from groom pointing RIGHT toward heart -->
+                        <div class="flex items-center gap-1" style="color:#d4af37; animation: arrow-toward-left 1.2s ease-in-out infinite;">
+                            <i class="fas fa-long-arrow-alt-right text-xl md:text-3xl opacity-50"></i>
                             <i class="fas fa-long-arrow-alt-right text-2xl md:text-4xl"></i>
-                            <i class="fas fa-long-arrow-alt-right text-xl md:text-3xl opacity-60"></i>
                         </div>
-                        <!-- Beating Heart -->
-                        <div class="text-gold-500 text-5xl md:text-7xl" style="animation: heartbeat 0.8s ease-in-out infinite; display:inline-block; filter: drop-shadow(0 0 10px rgba(212,175,55,0.8));">
+                        <!-- Beating Red Heart -->
+                        <div style="color:#e63946; animation: heartbeat 0.8s ease-in-out infinite; display:inline-block; filter: drop-shadow(0 0 12px rgba(230,57,70,0.9)); font-size: 3.5rem;">
                             <i class="fas fa-heart"></i>
                         </div>
-                        <!-- Arrow to bride -->
-                        <div class="flex items-center gap-1 text-gold-500" style="animation: arrow-pulse 1.2s ease-in-out infinite 0.4s;">
-                            <i class="fas fa-long-arrow-alt-right text-xl md:text-3xl opacity-60"></i>
-                            <i class="fas fa-long-arrow-alt-right text-2xl md:text-4xl"></i>
+                        <!-- Arrows from bride pointing LEFT toward heart -->
+                        <div class="flex items-center gap-1" style="color:#d4af37; animation: arrow-toward-right 1.2s ease-in-out infinite 0.4s;">
+                            <i class="fas fa-long-arrow-alt-left text-2xl md:text-4xl"></i>
+                            <i class="fas fa-long-arrow-alt-left text-xl md:text-3xl opacity-50"></i>
                         </div>
                     </div>
 
