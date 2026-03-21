@@ -291,15 +291,250 @@
                 </p>
 
                 <div class="gsap-hero-reveal transform translate-y-10 opacity-0">
-                    <div class="inline-block border-y border-gold-500 py-3 px-8 backdrop-blur-sm bg-royal-900/30">
-                        <span class="font-serif text-2xl tracking-widest">May 14, 2026</span>
+
+                    <!-- Tear-off Flip Calendar -->
+                    <style>
+                        #tcal-wrap {
+                            perspective: 700px;
+                            width: 150px;
+                            margin: 0 auto 14px;
+                            position: relative;
+                        }
+                        #tcal-card {
+                            width: 150px;
+                            border-radius: 12px;
+                            box-shadow: 0 16px 40px rgba(0,0,0,0.65), 0 0 0 1px rgba(201,168,76,0.2);
+                            overflow: hidden;
+                            position: relative;
+                        }
+                        #tcal-card::before, #tcal-card::after {
+                            content: '';
+                            position: absolute;
+                            border-radius: 11px;
+                            background: #ddd3b0;
+                            z-index: -1;
+                        }
+                        #tcal-card::before { bottom: -4px; left: 5px; right: 5px; height: 100%; }
+                        #tcal-card::after  { bottom: -8px; left: 9px; right: 9px; height: 100%; background: #ccc0a0; }
+
+                        #tcal-top-wrap {
+                            position: relative;
+                            height: 82px;
+                            perspective: 700px;
+                        }
+                        #tcal-top-panel {
+                            width: 100%;
+                            height: 100%;
+                            transform-origin: bottom center;
+                            transform-style: preserve-3d;
+                            position: relative;
+                        }
+                        #tcal-top-face, #tcal-top-back {
+                            position: absolute;
+                            inset: 0;
+                            backface-visibility: hidden;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            background: linear-gradient(160deg, #7b1a2a 55%, #4a0e1a);
+                            border-bottom: 2px solid #c9a84c;
+                        }
+                        #tcal-top-back {
+                            transform: rotateX(180deg);
+                            background: linear-gradient(160deg, #5a1020 55%, #38080f);
+                        }
+                        .tcal-month {
+                            font-family: sans-serif;
+                            font-size: 0.82rem;
+                            letter-spacing: 3px;
+                            font-weight: 800;
+                            color: #fff;
+                            text-transform: uppercase;
+                        }
+                        .tcal-year {
+                            font-family: sans-serif;
+                            font-size: 0.55rem;
+                            color: rgba(201,168,76,0.75);
+                            letter-spacing: 3px;
+                            margin-top: 3px;
+                        }
+                        #tcal-rings {
+                            position: absolute;
+                            top: -8px;
+                            left: 0; right: 0;
+                            display: flex;
+                            justify-content: center;
+                            gap: 38px;
+                            z-index: 20;
+                            pointer-events: none;
+                        }
+                        .tcal-ring {
+                            width: 15px; height: 15px;
+                            border-radius: 50%;
+                            background: radial-gradient(circle at 35% 35%, #e8c96a, #7a5810);
+                            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+                        }
+                        #tcal-bottom {
+                            background: linear-gradient(180deg, #faf5ea, #ede2c8);
+                            text-align: center;
+                            padding: 8px 8px 12px;
+                        }
+                        #tcal-date-num {
+                            font-family: Georgia, serif;
+                            font-size: 3.8rem;
+                            font-weight: 900;
+                            color: #2d1b3d;
+                            line-height: 1;
+                        }
+                        #tcal-day-label {
+                            font-family: sans-serif;
+                            font-size: 0.55rem;
+                            font-weight: 800;
+                            letter-spacing: 3px;
+                            color: #7b1a2a;
+                            text-transform: uppercase;
+                            margin-top: 4px;
+                            min-height: 10px;
+                        }
+                        @keyframes tcal-glow {
+                            0%,100% { text-shadow: none; color: #2d1b3d; }
+                            50%     { text-shadow: 0 0 20px #c9a84c99; color: #7b1a2a; }
+                        }
+                        @keyframes tcal-day-glow {
+                            0%,100% { color: #7b1a2a; }
+                            50%     { color: #c9a84c; }
+                        }
+                        .tcal-final #tcal-date-num  { animation: tcal-glow     1.8s ease-in-out infinite; }
+                        .tcal-final #tcal-day-label { animation: tcal-day-glow 1.8s ease-in-out infinite; }
+                    </style>
+
+                    <div id="tcal-wrap">
+                        <div id="tcal-rings">
+                            <div class="tcal-ring"></div>
+                            <div class="tcal-ring"></div>
+                        </div>
+                        <div id="tcal-card">
+                            <div id="tcal-top-wrap">
+                                <div id="tcal-top-panel">
+                                    <div id="tcal-top-face">
+                                        <div class="tcal-month" id="tcal-mo-front">JANUARY</div>
+                                        <div class="tcal-year"  id="tcal-yr-front">2025</div>
+                                    </div>
+                                    <div id="tcal-top-back">
+                                        <div class="tcal-month" id="tcal-mo-back"></div>
+                                        <div class="tcal-year"  id="tcal-yr-back"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tcal-bottom">
+                                <div id="tcal-date-num">—</div>
+                                <div id="tcal-day-label"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mt-4 font-sans text-gold-300 tracking-wide">Nizamabad, Telangana</div>
+
+                    <div class="mt-2 font-sans text-gold-300 tracking-wide">Nizamabad, Telangana</div>
+                    <div class="mt-3 animate-bounce">
+                        <i class="fas fa-chevron-down text-gold-500 text-2xl"></i>
+                    </div>
                 </div>
 
-                <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-                    <i class="fas fa-chevron-down text-gold-500 text-2xl"></i>
-                </div>
+                <script>
+                (function() {
+                    const MONTHS = ["JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE",
+                                    "JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"];
+                    const DAYS   = ["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"];
+
+                    const panel    = document.getElementById('tcal-top-panel');
+                    const moFront  = document.getElementById('tcal-mo-front');
+                    const yrFront  = document.getElementById('tcal-yr-front');
+                    const moBack   = document.getElementById('tcal-mo-back');
+                    const yrBack   = document.getElementById('tcal-yr-back');
+                    const dateNum  = document.getElementById('tcal-date-num');
+                    const dayLabel = document.getElementById('tcal-day-label');
+                    const card     = document.getElementById('tcal-card');
+
+                    const FINAL = { y: 2026, m: 4, d: 14 };
+
+                    // build sequence: Jan2025 → May2026 (month only), then final day frame
+                    const sequence = [];
+                    for (let y = 2025; y <= 2026; y++) {
+                        for (let m = 0; m < 12; m++) {
+                            if (y === 2026 && m >= 4) break;
+                            sequence.push({ y, m, d: null });
+                        }
+                    }
+                    sequence.push(FINAL);
+
+                    function applyFront(frame) {
+                        moFront.textContent = MONTHS[frame.m];
+                        yrFront.textContent = frame.y;
+                        dateNum.textContent = frame.d ? frame.d : '—';
+                        dayLabel.textContent = frame.d
+                            ? DAYS[new Date(frame.y, frame.m, frame.d).getDay()]
+                            : '';
+                    }
+
+                    function showFinal() {
+                        applyFront(FINAL);
+                        card.classList.add('tcal-final');
+                    }
+
+                    let busy = false;
+
+                    function flipTo(frame, speed, cb) {
+                        if (busy) return;
+                        busy = true;
+
+                        moBack.textContent = MONTHS[frame.m];
+                        yrBack.textContent = frame.y;
+
+                        const half = speed / 2;
+                        panel.style.transition = `transform ${half}ms cubic-bezier(0.55,0,0.45,1)`;
+                        panel.style.transform  = 'rotateX(-180deg)';
+
+                        setTimeout(function() {
+                            applyFront(frame);
+                            panel.style.transition = 'none';
+                            panel.style.transform  = 'rotateX(180deg)';
+
+                            requestAnimationFrame(function() {
+                                requestAnimationFrame(function() {
+                                    panel.style.transition = `transform ${half}ms cubic-bezier(0.55,0,0.45,1)`;
+                                    panel.style.transform  = 'rotateX(0deg)';
+                                    setTimeout(function() { busy = false; cb && cb(); }, half);
+                                });
+                            });
+                        }, half);
+                    }
+
+                    // start animation only after GSAP reveals the calendar
+                    document.addEventListener('calReady', function() {
+                        applyFront(sequence[0]);
+                        let idx = 0;
+
+                        function next() {
+                            idx++;
+                            if (idx >= sequence.length) return;
+                            const frame   = sequence[idx];
+                            const isFinal = idx === sequence.length - 1;
+                            const speed   = idx >= sequence.length - 4 ? 700 : 180;
+
+                            flipTo(frame, speed, function() {
+                                if (isFinal) {
+                                    card.classList.add('tcal-final');
+                                } else {
+                                    setTimeout(next, 40);
+                                }
+                            });
+                        }
+
+                        setTimeout(next, 300);
+                    }, { once: true });
+                })();
+                </script>
+
             </div>
         </section>
 
@@ -1001,7 +1236,8 @@
                 stagger: 0.2,
                 duration: 1.5,
                 ease: "power3.out",
-                delay: 0.5
+                delay: 0.5,
+                onComplete: () => document.dispatchEvent(new Event('calReady'))
             });
 
             // Parallax Background
