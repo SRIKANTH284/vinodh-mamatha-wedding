@@ -435,7 +435,162 @@
                     </div>
 
                     <div class="mt-2 font-sans text-gold-300 tracking-wide">Nizamabad, Telangana</div>
-                    <div class="mt-3 animate-bounce">
+
+                    <!-- Flip Countdown Timer -->
+                    <div id="wedding-countdown" class="mt-5 mb-1">
+                        <p class="font-serif text-gold-400 text-xs tracking-widest uppercase mb-3 opacity-80">Until We Say I Do</p>
+                        <div class="flex justify-center items-end gap-2">
+
+                            <div class="fcd-unit">
+                                <div class="fcd-digits">
+                                    <div class="fcd-tile" id="fcd-d0"></div>
+                                    <div class="fcd-tile" id="fcd-d1"></div>
+                                </div>
+                                <div class="fcd-lbl">Days</div>
+                            </div>
+
+                            <div class="fcd-colon">:</div>
+
+                            <div class="fcd-unit">
+                                <div class="fcd-digits">
+                                    <div class="fcd-tile" id="fcd-h0"></div>
+                                    <div class="fcd-tile" id="fcd-h1"></div>
+                                </div>
+                                <div class="fcd-lbl">Hours</div>
+                            </div>
+
+                            <div class="fcd-colon">:</div>
+
+                            <div class="fcd-unit">
+                                <div class="fcd-digits">
+                                    <div class="fcd-tile" id="fcd-m0"></div>
+                                    <div class="fcd-tile" id="fcd-m1"></div>
+                                </div>
+                                <div class="fcd-lbl">Mins</div>
+                            </div>
+
+                            <div class="fcd-colon">:</div>
+
+                            <div class="fcd-unit">
+                                <div class="fcd-digits">
+                                    <div class="fcd-tile" id="fcd-s0"></div>
+                                    <div class="fcd-tile" id="fcd-s1"></div>
+                                </div>
+                                <div class="fcd-lbl">Secs</div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <style>
+                        .fcd-unit  { display:flex; flex-direction:column; align-items:center; }
+                        .fcd-digits { display:flex; gap:3px; }
+                        .fcd-lbl {
+                            font-family: sans-serif;
+                            font-size: 0.5rem;
+                            letter-spacing: 2px;
+                            text-transform: uppercase;
+                            color: rgba(201,168,76,0.6);
+                            margin-top: 6px;
+                        }
+                        .fcd-colon {
+                            font-family: Georgia, serif;
+                            font-size: 1.8rem;
+                            font-weight: 900;
+                            color: rgba(201,168,76,0.5);
+                            margin-bottom: 16px;
+                            line-height: 1;
+                            align-self: center;
+                        }
+                        .fcd-tile {
+                            width: 36px;
+                            height: 52px;
+                            background: linear-gradient(160deg, #3a1428, #1e0810);
+                            border-radius: 8px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-family: Georgia, serif;
+                            font-size: 2rem;
+                            font-weight: 900;
+                            color: #c9a84c;
+                            box-shadow: 0 4px 12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(201,168,76,0.1);
+                            position: relative;
+                            perspective: 200px;
+                        }
+                        /* centre line on tile */
+                        .fcd-tile::after {
+                            content: '';
+                            position: absolute;
+                            left: 0; right: 0;
+                            top: 50%;
+                            height: 1px;
+                            background: rgba(0,0,0,0.5);
+                        }
+                        /* flip animation */
+                        @keyframes fcd-flip {
+                            0%   { transform: rotateX(0deg);    opacity: 1; }
+                            45%  { transform: rotateX(-90deg);  opacity: 0.4; }
+                            55%  { transform: rotateX(90deg);   opacity: 0.4; }
+                            100% { transform: rotateX(0deg);    opacity: 1; }
+                        }
+                        .fcd-flipping { animation: fcd-flip 0.4s cubic-bezier(0.45,0,0.55,1); }
+                    </style>
+
+                    <script>
+                    (function() {
+                        const wedding = new Date('2026-05-14T11:30:00+05:30').getTime();
+
+                        const tiles = {
+                            days:  [document.getElementById('fcd-d0'), document.getElementById('fcd-d1')],
+                            hours: [document.getElementById('fcd-h0'), document.getElementById('fcd-h1')],
+                            mins:  [document.getElementById('fcd-m0'), document.getElementById('fcd-m1')],
+                            secs:  [document.getElementById('fcd-s0'), document.getElementById('fcd-s1')]
+                        };
+                        const prev = { days: -1, hours: -1, mins: -1, secs: -1 };
+
+                        function setTile(tile, digit, animate) {
+                            if (animate) {
+                                tile.classList.remove('fcd-flipping');
+                                void tile.offsetWidth;
+                                tile.classList.add('fcd-flipping');
+                                // swap digit at halfway (tile is edge-on, invisible)
+                                setTimeout(function() {
+                                    tile.textContent = digit;
+                                }, 200);
+                                // remove class only after full animation completes
+                                tile.addEventListener('animationend', function() {
+                                    tile.classList.remove('fcd-flipping');
+                                }, { once: true });
+                            } else {
+                                tile.textContent = digit;
+                            }
+                        }
+
+                        function update(key, val) {
+                            const s  = String(val).padStart(2, '0');
+                            const d0 = s[0], d1 = s[1];
+                            const ps = String(prev[key]).padStart(2, '0');
+                            const animate = prev[key] !== -1;
+                            if (!animate || ps[0] !== d0) setTile(tiles[key][0], d0, animate);
+                            if (!animate || ps[1] !== d1) setTile(tiles[key][1], d1, animate);
+                            prev[key] = val;
+                        }
+
+                        function tick() {
+                            const diff  = wedding - Date.now();
+                            update('days',  diff > 0 ? Math.floor(diff / 86400000) : 0);
+                            update('hours', diff > 0 ? Math.floor((diff % 86400000) / 3600000) : 0);
+                            update('mins',  diff > 0 ? Math.floor((diff % 3600000)  / 60000) : 0);
+                            update('secs',  diff > 0 ? Math.floor((diff % 60000)    / 1000) : 0);
+                        }
+
+                        tick();
+                        setInterval(tick, 1000);
+                    })();
+                    </script>
+
+                    <div class="mt-4 animate-bounce">
                         <i class="fas fa-chevron-down text-gold-500 text-2xl"></i>
                     </div>
                 </div>
