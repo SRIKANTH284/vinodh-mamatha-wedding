@@ -242,7 +242,7 @@
                     Dr.Vinod & Mamatha</h1>
 
                 <!-- Single Gold Balloon -->
-                <div id="balloonBouquet" style="position:relative;width:160px;height:200px;cursor:none;user-select:none;margin:0 auto;">
+                <div id="balloonBouquet" style="position:relative;width:160px;height:200px;cursor:pointer;user-select:none;margin:0 auto;">
                     <svg id="bouquetSVG" viewBox="0 0 160 200" width="160" height="200" style="display:block;margin:0 auto;">
                         <defs>
                             <radialGradient id="g3" cx="35%" cy="30%">
@@ -269,29 +269,13 @@
                         0%,100% { transform: translateY(0) rotate(-1deg); }
                         50%     { transform: translateY(-10px) rotate(1deg); }
                     }
-                    @keyframes pinBounce {
-                        0%,100% { transform: rotate(-45deg) translateY(0); }
-                        50%     { transform: rotate(-45deg) translateY(-8px); }
-                    }
-                    @keyframes pinStab {
-                        0%   { transform: rotate(-45deg) translateY(0) scale(1); }
-                        50%  { transform: rotate(-45deg) translateY(18px) scale(1.1); }
-                        100% { transform: rotate(-45deg) translateY(18px) scale(1); }
-                    }
                     @keyframes balloonShake {
                         0%,100% { transform: scale(1); }
                         30%     { transform: scale(1.08) rotate(2deg); }
                         60%     { transform: scale(1.12) rotate(-2deg); }
                     }
                     #balloonBouquet { animation: bouquetFloat 3s ease-in-out infinite; }
-                    #floatingPin {
-                        position: fixed;
-                        pointer-events: none;
-                        z-index: 99999;
-                        display: none;
-                        animation: pinBounce 0.8s ease-in-out infinite;
-                        transform-origin: top right;
-                    }
+                    #balloonBouquet:hover { filter: brightness(1.15); }
                 </style>
 
                 <script>
@@ -299,11 +283,21 @@
                     const bouquet = document.getElementById('balloonBouquet');
 
                     const BURST_COLORS = [
-                        ['#ff9999','#cc2222'],['#ffcc66','#cc7700'],['#99ccff','#2255cc'],
-                        ['#cc99ff','#5522bb'],['#99ffcc','#229955'],['#ffaacc','#cc2255'],
-                        ['#ffe066','#c9a84c'],['#ff8c66','#cc3300'],['#aaffaa','#33aa33'],
-                        ['#ffb3de','#cc3377'],['#b3e0ff','#0066cc'],['#ffd9b3','#cc6600'],
-                        ['#ff6699','#990033'],['#66ffcc','#009966'],['#ffff66','#999900'],
+                        ['#ffb3b3','#e63333','#991111'], // red
+                        ['#ffe099','#e68a00','#995c00'], // orange
+                        ['#b3d9ff','#2266dd','#0033aa'], // blue
+                        ['#ddb3ff','#7733ee','#440099'], // purple
+                        ['#b3ffd9','#22bb66','#006633'], // green
+                        ['#ffcce0','#ee3377','#990044'], // pink
+                        ['#fff0a0','#e6c200','#997a00'], // yellow
+                        ['#ffb399','#dd4400','#882200'], // burnt orange
+                        ['#c2ffc2','#33bb33','#1a661a'], // lime
+                        ['#ffccee','#dd2277','#881144'], // hot pink
+                        ['#c2e8ff','#1188dd','#005599'], // sky blue
+                        ['#ffe5c2','#dd7700','#884400'], // amber
+                        ['#ff99bb','#cc0044','#770022'], // crimson
+                        ['#99ffe8','#00bb88','#006655'], // teal
+                        ['#ffffaa','#cccc00','#777700'], // lime yellow
                     ];
 
                     // Full-screen overlay — pointer-events:none always
@@ -311,95 +305,98 @@
                     overlay.style.cssText = 'position:fixed;inset:0;z-index:9997;pointer-events:none;overflow:hidden;';
                     document.body.appendChild(overlay);
 
+                    let gradId = 0;
                     function burstBalloon(cx, cy, size, color, delay) {
                         setTimeout(function() {
-                            const b  = document.createElement('div');
-                            const bw = size * 0.82, bh = size;
+                            const id  = 'bg' + (gradId++);
+                            const bw  = size * 0.78;
+                            const bh  = size;
+                            const svgW = bw + 10;
+                            const svgH = bh + size * 0.35; // room for knot + string
 
-                            // random burst direction — all across screen
                             const angle    = Math.random() * Math.PI * 2;
-                            const distance = window.innerWidth * 0.4 + Math.random() * window.innerWidth * 0.4;
+                            const distance = window.innerWidth * 0.35 + Math.random() * window.innerWidth * 0.45;
                             const tx = Math.cos(angle) * distance;
-                            const ty = Math.sin(angle) * distance - window.innerHeight * 0.2;
+                            const ty = Math.sin(angle) * distance - window.innerHeight * 0.15;
 
-                            b.innerHTML = `<div style="position:absolute;top:18%;left:22%;width:32%;height:20%;background:rgba(255,255,255,0.3);border-radius:50%;transform:rotate(-30deg);"></div>`;
+                            // wobble as it flies
+                            const wobbleAngle = (Math.random() - 0.5) * 30;
+
+                            const rx = bw / 2;
+                            const ry = bh / 2;
+                            const cx2 = svgW / 2;
+                            const cy2 = ry + 4;
+                            // knot triangle
+                            const kx = cx2, ky = cy2 + ry;
+                            // string
+                            const stringLen = size * 0.28;
+
+                            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgW}" height="${svgH}" style="overflow:visible;">
+                                <defs>
+                                    <radialGradient id="${id}" cx="35%" cy="28%" r="65%">
+                                        <stop offset="0%"   stop-color="${color[0]}"/>
+                                        <stop offset="60%"  stop-color="${color[1]}"/>
+                                        <stop offset="100%" stop-color="${color[2]}"/>
+                                    </radialGradient>
+                                </defs>
+                                <!-- balloon body -->
+                                <ellipse cx="${cx2}" cy="${cy2}" rx="${rx}" ry="${ry}" fill="url(#${id})"/>
+                                <!-- primary shine -->
+                                <ellipse cx="${cx2 - rx*0.22}" cy="${cy2 - ry*0.3}"
+                                    rx="${rx*0.28}" ry="${ry*0.16}"
+                                    fill="rgba(255,255,255,0.5)" transform="rotate(-25,${cx2 - rx*0.22},${cy2 - ry*0.3})"/>
+                                <!-- secondary soft shine -->
+                                <ellipse cx="${cx2 - rx*0.1}" cy="${cy2 - ry*0.55}"
+                                    rx="${rx*0.12}" ry="${ry*0.07}"
+                                    fill="rgba(255,255,255,0.3)" transform="rotate(-20,${cx2},${cy2})"/>
+                                <!-- knot -->
+                                <polygon points="${kx-4},${ky} ${kx+4},${ky} ${kx},${ky+7}" fill="${color[2]}"/>
+                                <!-- string wavy -->
+                                <path d="M${kx},${ky+7} Q${kx-6},${ky+stringLen*0.5} ${kx},${ky+stringLen}"
+                                    stroke="rgba(255,255,255,0.45)" stroke-width="1" fill="none"/>
+                            </svg>`;
+
+                            const b = document.createElement('div');
                             b.style.cssText = `
                                 position:fixed;
-                                left:${cx - bw/2}px; top:${cy - bh/2}px;
-                                width:${bw}px; height:${bh}px;
-                                border-radius:50% 50% 50% 50% / 55% 55% 45% 45%;
-                                background:radial-gradient(circle at 35% 30%, ${color[0]}, ${color[1]});
-                                box-shadow:inset -4px -4px 10px rgba(0,0,0,0.2),inset 3px 3px 8px rgba(255,255,255,0.2);
+                                left:${cx - svgW/2}px;
+                                top:${cy - bh/2}px;
+                                width:${svgW}px; height:${svgH}px;
                                 pointer-events:none;
                                 z-index:9998;
-                                transition: transform 2.2s cubic-bezier(0.2,0,0.8,1), opacity 2.2s ease-in;
-                                transform-origin: center;
+                                transition: transform 2.4s cubic-bezier(0.15,0,0.75,1), opacity 2.4s ease-in;
+                                transform-origin: center top;
+                                filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
                             `;
+                            b.innerHTML = svg;
                             overlay.appendChild(b);
 
                             requestAnimationFrame(function() {
                                 requestAnimationFrame(function() {
-                                    b.style.transform = `translate(${tx}px,${ty}px) scale(0.3)`;
+                                    b.style.transform = `translate(${tx}px,${ty}px) rotate(${wobbleAngle}deg) scale(0.2)`;
                                     b.style.opacity   = '0';
                                 });
                             });
 
-                            setTimeout(() => b.remove(), 2400);
+                            setTimeout(() => b.remove(), 2600);
                         }, delay);
                     }
 
-                    // Create large floating pin
-                    const floatingPin = document.createElement('div');
-                    floatingPin.id = 'floatingPin';
-                    floatingPin.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 40 40">
-                            <!-- needle body -->
-                            <line x1="36" y1="4" x2="6" y2="34" stroke="#d0d0d0" stroke-width="2.5" stroke-linecap="round"/>
-                            <!-- needle shine -->
-                            <line x1="34" y1="6" x2="28" y2="12" stroke="rgba(255,255,255,0.6)" stroke-width="1" stroke-linecap="round"/>
-                            <!-- pin head -->
-                            <circle cx="36" cy="4" r="6" fill="#cc2222"/>
-                            <circle cx="34" cy="2.5" r="2" fill="rgba(255,255,255,0.4)"/>
-                            <!-- tip -->
-                            <line x1="6" y1="34" x2="3" y2="37" stroke="#aaa" stroke-width="1.2" stroke-linecap="round"/>
-                        </svg>
-                        <div style="text-align:center;font-family:sans-serif;font-size:10px;color:rgba(255,255,255,0.7);margin-top:2px;letter-spacing:1px;">CLICK!</div>
-                    `;
-                    document.body.appendChild(floatingPin);
-
-                    // Follow mouse over balloon
-                    bouquet.addEventListener('mouseenter', function() {
-                        floatingPin.style.display = 'block';
-                        floatingPin.style.animation = 'pinBounce 0.8s ease-in-out infinite';
-                    });
-                    bouquet.addEventListener('mousemove', function(e) {
-                        floatingPin.style.left = (e.clientX - 60) + 'px';
-                        floatingPin.style.top  = (e.clientY - 60) + 'px';
-                    });
-                    bouquet.addEventListener('mouseleave', function() {
-                        floatingPin.style.display = 'none';
-                    });
-
-                    bouquet.addEventListener('click', function onBouquetClick(e) {
+                    bouquet.addEventListener('click', function onBouquetClick() {
                         bouquet.removeEventListener('click', onBouquetClick);
 
                         const rect = bouquet.getBoundingClientRect();
                         const cx   = rect.left + rect.width  / 2;
                         const cy   = rect.top  + rect.height / 2;
 
-                        // pin stabs in
-                        floatingPin.style.animation = 'pinStab 0.25s ease-out forwards';
-
                         // balloon shakes then pops
                         bouquet.style.animation = 'balloonShake 0.25s ease-in-out';
-
                         setTimeout(function() {
-                            floatingPin.style.display = 'none';
                             bouquet.style.animation  = 'none';
                             bouquet.style.transition = 'transform 0.25s ease-out, opacity 0.25s';
                             bouquet.style.transform  = 'scale(1.4)';
                             bouquet.style.opacity    = '0';
-                        }, 260);
+                        }, 250);
 
                         // Release 50 balloons bursting in ALL directions across full screen
                         for (let i = 0; i < 50; i++) {
