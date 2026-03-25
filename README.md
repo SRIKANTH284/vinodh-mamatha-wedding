@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="couple.jpg" align="center" width="30%">
+    <img src="images/couple.jpg" align="center" width="30%">
 </p>
 <p align="center"><h1 align="center">Dr.Vinod & Mamatha Wedding</h1></p>
 <p align="center">
@@ -51,13 +51,15 @@ A digital wedding invitation website for the wedding of **Dr.Vinod** & **Mamatha
 ```sh
 └── vinodh-mamatha-wedding/
     ├── index.html
-    ├── couple.jpg
-    ├── bava.png
-    ├── akka.jpg
-    ├── 1.png - 18.png        (family photos)
-    ├── 250px-Om_symbol.svg.png
-    ├── Kudmayi-(Film-Version)(PaglaSongs).mp3
     ├── README.md
+    ├── images/
+    │   ├── couple.jpg
+    │   ├── bava.png
+    │   ├── akka.jpg
+    │   ├── web.png
+    │   ├── 1.png - 18.png        (family photos)
+    │   ├── 250px-Om_symbol.svg.png
+    │   └── Kudmayi-(Film-Version)(PaglaSongs).mp3
     ├── libs/
     │   ├── font-awesome/
     │   └── gsap/
