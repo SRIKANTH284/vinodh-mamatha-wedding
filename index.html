@@ -385,6 +385,10 @@
                     bouquet.addEventListener('click', function onBouquetClick() {
                         bouquet.removeEventListener('click', onBouquetClick);
 
+                        // Unlock audio immediately within the user gesture (Chrome mobile fix)
+                        const audioEl = document.getElementById('weddingMusic');
+                        if (audioEl) { audioEl.volume = 0; audioEl.play().catch(()=>{}); }
+
                         const rect = bouquet.getBoundingClientRect();
                         const cx   = rect.left + rect.width  / 2;
                         const cy   = rect.top  + rect.height / 2;
@@ -1479,12 +1483,16 @@
 
         // Open Interaction
         document.addEventListener('doOpenInvitation', () => {
-            // 1. Play Music
+            // 1. Play Music (already unlocked on balloon click — just set volume)
             audio.volume = 0.5;
             audio.play().then(() => {
                 isPlaying = true;
                 musicControl.classList.remove('hidden');
-            }).catch(e => console.log("Audio play failed", e));
+            }).catch(e => {
+                // Fallback: show music button so user can tap manually
+                musicControl.classList.remove('hidden');
+                console.log("Audio play failed", e);
+            });
 
             // GSAP Timeline for Realistic Opening
             const openTl = gsap.timeline({
