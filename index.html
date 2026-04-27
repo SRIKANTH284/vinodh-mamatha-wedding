@@ -1382,15 +1382,18 @@
 
     <script>
         // ==================== VISITOR COUNTER ====================
-        fetch('https://api.counterapi.dev/v1/vinodhmamatha-wedding/visits/up')
-            .then(res => res.json())
-            .then(data => {
-                const count = data.count;
-                document.getElementById('visitor-count').textContent = count.toLocaleString();
-            })
-            .catch(() => {
-                document.getElementById('visitor-count').textContent = '—';
-            });
+        (function() {
+            const el = document.getElementById('visitor-count');
+            const BASE = 100;
+            let local = parseInt(localStorage.getItem('wv_count') || '0') + 1;
+            localStorage.setItem('wv_count', local);
+            el.textContent = (BASE + local).toLocaleString();
+
+            fetch('https://api.counterapi.dev/v1/srikanthbadavathfamilywedding/visits/up')
+                .then(r => r.json())
+                .then(d => { if (d && d.count) el.textContent = d.count.toLocaleString(); })
+                .catch(() => {});
+        })();
     </script>
 
     <script>
