@@ -1373,28 +1373,14 @@
             <div class="mt-6 mb-2 flex items-center justify-center gap-3">
                 <div class="text-center px-6 py-3 border border-gold-500 rounded-full inline-block">
                     <p class="text-gray-400 text-xs uppercase tracking-widest mb-1">Total Visitors</p>
-                    <p class="text-gold-500 text-2xl font-bold" id="visitor-count">...</p>
+                    <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=2265a1be3f9dabd4bc67c2b1a3fd49260d30eeac'></script>
+                    <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1542214/t/13"></script>
                 </div>
             </div>
             <p class="text-gray-700 text-xs mt-4">Designed and developed by <a href="https://srikanthbadavath.com/" target="_blank" class="text-gold-500 hover:text-gold-400 underline">Srikanth Badavath</a> Technologies VA, USA</p>
         </footer>
     </main>
 
-    <script>
-        // ==================== VISITOR COUNTER ====================
-        (function() {
-            const el = document.getElementById('visitor-count');
-            const BASE = 100;
-            let local = parseInt(localStorage.getItem('wv_count') || '0') + 1;
-            localStorage.setItem('wv_count', local);
-            el.textContent = (BASE + local).toLocaleString();
-
-            fetch('https://api.counterapi.dev/v1/srikanthbadavathfamilywedding/visits/up')
-                .then(r => r.json())
-                .then(d => { if (d && d.count) el.textContent = d.count.toLocaleString(); })
-                .catch(() => {});
-        })();
-    </script>
 
     <script>
         // ==================== GSAP ANIMATIONS ====================
